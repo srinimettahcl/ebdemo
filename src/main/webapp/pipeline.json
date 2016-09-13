@@ -1,0 +1,93 @@
+{
+    "pipeline": {
+        "roleArn": "arn:aws:iam::716523076871:role/AWS-CodePipeline-Service", 
+        "stages": [
+            {
+                "name": "Source", 
+                "actions": [
+                    {
+                        "inputArtifacts": [], 
+                        "name": "Source", 
+                        "actionTypeId": {
+                            "category": "Source", 
+                            "owner": "ThirdParty", 
+                            "version": "1", 
+                            "provider": "GitHub"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ], 
+                        "configuration": {
+                            "Owner": "srinimettahcl", 
+                            "Repo": "ebdemo", 
+                            "Branch": "master", 
+                            "OAuthToken": "****"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Build", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ], 
+                        "name": "MavenJenkinsBuild", 
+                        "actionTypeId": {
+                            "category": "Build", 
+                            "owner": "Custom", 
+                            "version": "1", 
+                            "provider": "Jenkins"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ], 
+                        "configuration": {
+                            "ProjectName": "ebdemo"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Beta", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ], 
+                        "name": "Presales-WS-ebdemo-env", 
+                        "actionTypeId": {
+                            "category": "Deploy", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "ElasticBeanstalk"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {
+                            "ApplicationName": "test", 
+                            "EnvironmentName": "Presales-WS-ebdemo-env"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }
+        ], 
+        "artifactStore": {
+            "type": "S3", 
+            "location": "codepipeline-us-west-2-313382320812"
+        }, 
+        "name": "EBDemoPipeline", 
+        "version": 3
+    }
+}
